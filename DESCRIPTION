@@ -1,0 +1,17 @@
+Package: RTutorSAGI
+Type: Package
+Title: Submission Analysis for Grading and Improvement
+Version: 2019.07.18
+Date: 2019-07-18
+Author: Sebastian Kranz
+Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
+Description: Tools for analysising submissions of solved RTutor problem sets.
+  The functions help automatic bulk grading for several problem sets.
+  Another feature is a shiny app that helps to analyse where students got
+  stuck and correspondingly improve the problem set.
+License: Programm code: GPL >= 2.0
+    Contributed problem sets: Creative Commons (CY)
+Depends: RTutor
+Suggests:
+  digest
+RoxygenNote: 6.0.1
