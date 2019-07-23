@@ -19,7 +19,9 @@ load.subs = function(base.dir=NULL, files=NULL, stud.name.fun=NULL, sub.dir = fi
   sub.li
 }
 
-
+#' Load a single submission file
+#'
+#' See README.md for usage
 load.sub = function(file, stud.name.fun=NULL) {
   restore.point("load.sub.with.stud.name")
 

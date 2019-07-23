@@ -20,7 +20,9 @@ While best to my knowledge the software works fine, I cannot rule out with 100% 
 
 ## Security
 
-For security reasons the functions described below don't evaluate the code that students have submitted. For grading they rely on the statistics created on students' computers when `make.submission` was called. Nevertheless, the submission files from all students are loaded. While I don't know how (and did not find any specific warnings on Google) this potentially may open some attack vector. To be on the safe side, you can analyse the submissions inside an [RStudio docker container](https://hub.docker.com/r/rocker/rstudio/) with restricted permissions.
+For security reasons the functions described below don't evaluate the code that students have submitted. For grading they rely on the statistics created on students' computers when `make.submission` was called. Nevertheless, the submission files from all students are loaded. While I don't know how (and did not find any specific warnings on Google) this potentially may open some attack vector. Also you may manually run students' code when improving your problem set and may overlook some code with undesired consequences.
+
+For better security, you can analyse the submissions inside an [RStudio docker container](https://hub.docker.com/r/rocker/rstudio/) with restricted permissions.
 
 ## Installation
 
@@ -34,7 +36,7 @@ Alternatively, you can directly install from Github using `devtools::install_git
 
 ## Loading submission
 
-We first have to load all relevant submission. A submission file that a student has created with `make.submission` has the file type `.sub`.
+We first have to load all relevant submissions. A submission file that a student has created with `make.submission` has the file type `.sub`.
 
 You can load a single submission file with the function `load.sub` (which is basically a wrapper around base R `load`):
 
@@ -67,7 +69,7 @@ We now load all submissions into R:
 ```r
 sub.li = load.subs(sub.dir = "sub", stud.name.fun=moodle.stud.name.fun)
 ```
-When loading the submissions, we also want to assign the correct student name for each submission. While students shall specify a user name in the Rmd file that contains their solution, these sepcified user names may not be completely reliable. Instead, I want to use the student names from Moodle. Moodle encodes the student's name in the file name of the submission. Currently (Summer 2019) the format has the structure:
+When loading the submissions, we also want to assign the correct student name for each submission. While students shall specify a user name in the Rmd file that contains their solution, these specified user names may not be completely reliable. Instead, I want to use the student names from Moodle. Moodle encodes the student's name in the file name of the submission. Currently (Summer 2019) the format has the structure:
 
 `Upload_MoodleTaskName----StudentName--OriginalFileName.sub`
 
@@ -80,7 +82,7 @@ my.stud.name.fun = function(file, sub, ...) {
 ```
 The function `moodle.stud.name.fun` does a little bit more in order to deal with UTF-8 encoding problems.
 
-If no `stud.name.fun` is provided, we use by default the user.name specified in the problem set. But as mentioned, that might be more unreliable.
+If no `stud.name.fun` is provided, we use by default the user.name specified in the problem set. But as mentioned, that might be unreliable.
 
 Having loaded a list of all submissions `sub.li`, we can then procceed with grading or analysing the logs.
 
@@ -96,11 +98,11 @@ If `sub.li` contains a loaded list of submissions, we can summarize total points
 grade.subs(sub.li=sub.li, grade.dir="grades")
 ```
 
-It then generates in the `grade.dir` directory a csv file with total points of every student and another file with point per problem set. The tables also contain information about how many hints were asked. Hints have no impact on the points, however.
+It then generates in the `grade.dir` directory a csv file with total points of every student and another file with points per problem set. The tables also contain information about how many hints were asked. Hints have no impact on the points, however.
 
 If submissions also contain log files, there is also a csv file that estimates work time on the problem sets.
 
-What you do with the total points is up to you. You may set a minimal point requirement to be allowed to participate in the exam. Or you may make the points a small part of the total grade.
+What you do with the total points is up to you. Perhaps, you want to set a minimal point requirement to be allowed to participate in the final exam. Alternatively, you may make the points a small part of the total grade.
 
 From my experience, even some small relevance for final grades provides nice incentives for students to work on the problem sets. I would not recommend to make the points from RTutor problem sets count much more than 10% of the total grade, however. I don't see an effective way how you can rule out cheating from students who copy the solutions from other students. The main reason for a grade optimizing student to work himself on the problem sets should be that it provides good preparation for the final exam.
 
@@ -114,13 +116,17 @@ The following submissions have not the extension .sub and will be ignored:
  Upload_PS_Intro----Max_Mustermann--Max_Mustermann_Intro.Rmd
 ```
 
-In my courses, it happens sometime that student upload the wrong file, like their Rmd file instead of the submission file created with `make.submission`. This is noted in the log. If you are lenient, you could then write the student an email and ask the student to upload the correct file and then repeat the whole process.
+In my courses, it happens from time to time that students upload the wrong file, like the Rmd file instead of the submission file created with `make.submission`. This is noted in the log. If you are lenient, you could then write the student an email and ask the student to upload the correct file and then repeat the whole process.
 
 ## Analyse logs in order to improve problem sets
 
-While I put quite some effort to create helpful automatic hints and failure messages, they may not always be enough. Sometimes students get stuck badly. While it is good if students have to think about a problem and solving requires some effort, sometimes a task may have just be too complicated. Alternatively, RTutor may expect a particular solution while a solution of the student that is seemingly also correct is rejected without approbriate feedback for the student why.
+In general, you would like to put students some effort into solving the problem set and enjoy sweet success after some struggeling. But then sometimes students can get stuck badly in a way you did not intend.
 
-When designing a problem set, it is hard to predict all the ways how students can get stuck and it is also quite tedious to cover all possible cases in advance. Better to have an iterative process, where we improve a problem set after seeing in detail how student got stuck. This information is stored in the logs that are by default part of students' submission files.
+When designing a problem set, it is hard to predict all the ways how students can get stuck. While automatic hints and tests should cover many cases they are not perfect. Also sometimes you may want to write custom hints, but don't know how much hint to give.
+
+The natural approach seems to have an iterative process, where one improves a problem set after seeing in detail how students got stuck.
+
+Information about solution attempts is stored in the logs that are by default part of students' submission files.
 
 To convert the information into a more convenient format call:
 
@@ -128,7 +134,8 @@ To convert the information into a more convenient format call:
 sub.li = load.subs(sub.dir="sub", rps.dir="org_ps")
 write.chunk.logs(sub.li, logs.dir = "chunk_logs")
 ```
-Make sure that you store in the directory specified by `rps.dir` all rps files of the original versions of your problem sets.
+
+Make sure that you store in the directory specified by `rps.dir` all rps files of the original (unimproved) versions of your problem sets.
 
 This call creates and fills the directory specified in `logs.dir` with subdirectories for each problem set. Each subdirectory contains an .R file for each chunk of the problem set that requires the user to enter code.
 
