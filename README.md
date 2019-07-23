@@ -282,7 +282,7 @@ ls(dat)
 # ...
 ```
 
-By default, if a variable is assigned it does not matter which function the user uses. However, if just a single call like `colnames("dat")` is stated, RTutor requires the user to use this function `colnames`. Unfortunately, there were no informative automatic messages for the user to make her aware of this issue. In the new RTutor version, the user gets a better message if she got an equivalent solution with a different call. E.g. if she typed
+If a variable is assigned, it does not matter by default which function the user uses. However, if just a call like `colnames("dat")` is stated, RTutor requires the user to use exactly that function `colnames`. Unfortunately, there were no informative automatic messages that made the student aware of this issue. In the new RTutor version, the user gets a better message if she got an equivalent solution with a different call. E.g. if she typed
 
 ```r
 names(dat)
@@ -314,14 +314,16 @@ z=(1:100)
 z=z*z
 z
 ```
-Unfortunetaly, RTutor does not consider the solution correct because it gets confused since `z` is assigned twice in the chunk. Even worse the old version of RTutor it did not provide a helpful error message.
+Unfortunately, RTutor does not consider the solution correct because it gets confused since `z` is assigned twice in the chunk. Even worse the old version of RTutor it did not provide a helpful error message.
 
-(The reasons that RTutor cannot handle such code correctly are complicated. It has to due with the fact that RTutor tests by default separately each command in a given chunk of the sample solution. This means it has to match the commands from the student's code to the corresponding command in the sample solution. If `z` was assigned twice, RTutor assumed that one of the two lines must be completely correct in itself instead of being correct only when run together.)
+(The reasons that RTutor cannot handle such code correctly are complicated. It has to due with the fact that RTutor tests by default separately each command in a given chunk of the sample solution. This means it has to match the commands from the student's code to the corresponding command in the sample solution. If `z` was assigned twice, old RTutor assumed that one of the two lines must be completely correct in itself instead of being correct only when run together.)
 
 With the new RTutor version there is a strict requirement that a given variable name like `z` can only assigned once in a chunk. If it is assigned multiple times, the user now gets automatically an informative error message, like
 ```
 Error: 
-You have assigned 2 times a value to the variable z in your chunk. While you might get the correct result in RStudio, RTutor can only check your result if you assign a value to z only once in your chunk.
+You have assigned 2 times a value to the variable z in your chunk.
+While you might get the correct result in RStudio, RTutor can only check your result
+if you assign a value to z only once in your chunk.
 
 For a hint, type hint() in the console and press Enter.
 ```
@@ -330,7 +332,7 @@ For a hint, type hint() in the console and press Enter.
 
 Here is a suggestion for a rough workflow to improve problem sets.
 
-+ Wait after all solutions have been submitted for all problem sets your course. Then create a new working directory (possible as an RStudio project) and copy all problem set "_sol.Rmd"  files and .rps files into two the sub directories folders and "org_ps", "new_ps". Extract the solutions to a "sol" directory (see further above).
++ Wait after the solutions for all problem sets of your course have been submitted. Then create a new working directory (possible as an RStudio project) and copy all problem set `_sol.Rmd` files and `.rps` files into two the sub directories folders and `org_ps`, `new_ps`. Extract the solutions to a `sol` directory (see explanation further above).
 
 + Create all chunk logs with
 ```r
@@ -342,13 +344,14 @@ write.chunk.logs(sub.li, logs.dir = "chunk_logs")
   + On "Run Setup Chunk". Allows you to quickly recompile a changed problem set. This is at least the case if you follow the structure of all example problem sets where the first chunk (inside an ignore block) contains the code to create the problem set.
   + On RTutor's RStudio addin "Check Problemset" to quickly check the hints and tests for a student's solution.
 
-+ Open the solution file of a problem set (starting with the first) in the subdirectory "new_ps".
++ Open the solution file of a problem set (starting with the first) in the subdirectory `new_ps`. Let us assume your problem set is call "myps".
 
-+ Run the setup chunk to create a new version of the problem set and then open the `*sample_solution.Rmd` file.  
++ Run the setup chunk to compile the problem set and then open the `myps_sample_solution.Rmd` file.
+
 + Now look at the chunk logs for the current problem set and open the logs with relatively many errors (or users or hints).
 
-+ You may copy some alternative solutions that failed into the corresponding chunk of the sample solution file. Then check the problem set, look at the error message and possible call `hint()`.
++ You may copy some alternative solutions that failed into the corresponding chunk of the `myps_sample_solution.Rmd` file. Then check the problem set, look at the error message and possible call `hint()`.
 
-+ Possible adapt your `_sol.Rmd` file, recompile and check the sample solution with the problematic code again.
++ Possible adapt your `myps_sol.Rmd` file, recompile and check the sample solution with the problematic code again.
 
-+ Repeat until you are happy with the new problem set versions. 
++ Repeat for all chunks and problem sets until you are happy with the new versions. 
