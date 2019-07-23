@@ -122,24 +122,18 @@ In my courses, it happens from time to time that students upload the wrong file,
 
 In general, you would like to put students some effort into solving the problem set and enjoy sweet success after some struggeling. But then sometimes students can get stuck badly in a way you did not intend.
 
-When designing a problem set, it is hard to predict all the ways how students can get stuck. While automatic hints and tests should cover many cases they are not perfect. Also sometimes you may want to write custom hints, but don't know how much hint to give.
+When designing a problem set, it is hard to predict all the ways how students can get stuck. While automatic hints and tests should cover many cases, they are not perfect. Also sometimes you may want to write custom hints, but don't know all special cases a hint should cover.
 
 The natural approach seems to have an iterative process, where one improves a problem set after seeing in detail how students got stuck.
 
-Information about solution attempts is stored in the logs that are by default part of students' submission files.
-
-To convert the information into a more convenient format call:
+Information about solution attempts is stored in the logs that are by default part of students' submission files. To convert the information into a more convenient format call:
 
 ```r
 sub.li = load.subs(sub.dir="sub", rps.dir="org_ps")
 write.chunk.logs(sub.li, logs.dir = "chunk_logs")
 ```
 
-Make sure that you store in the directory specified by `rps.dir` all rps files of the original (unimproved) versions of your problem sets.
-
-This call creates and fills the directory specified in `logs.dir` with subdirectories for each problem set. Each subdirectory contains an .R file for each chunk of the problem set that requires the user to enter code.
-
-An example file name is
+Make sure that you store in the directory specified by `rps.dir` all rps files of the original (unimproved) versions of your problem sets. The call  to `write.chunk.logs` creates and fills the directory specified in `logs.dir` with subdirectories for each problem set. Each subdirectory contains an .R file for each chunk of the problem set that requires the user to enter code. An example file name is
 
 `3_e (e 88 u 13 h 11).R`
 
@@ -149,10 +143,11 @@ If you want to analyse these error and hint statistics in a nice R data frame, y
 ```r
 res = analyse.subs(sub.li,rps.dir="org_ps")
 sum.df = res$sum.df
-sum.df
 ```
+and then look at `sum.df`.
 
-Consider the following following task from Excercise 3 e) of my Intro to R problem set.
+
+For an example, of how the logs can help improving a problem set, consider the following following task from Excercise 3 e) of my Intro to R problem set.
 
 > e) Let z be a variable that shows the first 100 square numbers, i.e. 1,4,9,... Then show z.
 
@@ -195,37 +190,43 @@ Looking at the whole log file, I found that several students assigned `z=(1:10)^
 
 The sample solution was `z = 1:100 * 1:100`. The automatic hint for such a formula would have looked like this:
 ```
-You have to assign a correct formula to the variable 'z'. Here is a scrambled version of my solution with some characters being hidden by ?:
+You have to assign a correct formula to the variable 'z'.
+Here is a scrambled version of my solution with some
+characters being hidden by ?:
 
  z = 1??00 * 1:?0?
 ```
 
-I originally was of the opinion that the automatic hint gave away too much information here and therefore specified a custom hint. That just showed the message:
+When designing the problem set, I thought the that the automatic hint gave away too much information here and therefore specified a custom hint. The custom hint just showed the following message:
 ```
-There is a simple one-line formula to compute the 100 first square numbers. Just combine what you have learned in exercise 2 f) and in exercise 3 b).")
+There is a simple one-line formula to compute the 100 first square numbers.
+Just combine what you have learned in exercise 2 f) and in exercise 3 b).")
 ```
 
-Based on the log files, I have updatet to an adaptive hint that provides more detailed information for this common mistake. In the solution file the chunk now has the following code:
+Based on the log files, I have now updated to an adaptive hint that provides more detailed information for this common mistake. In the solution file the chunk now has the following code:
 ```r
 z = 1:100 * 1:100
 #< hint
 if (true(identical(z,1:10*1:10))) {
-  cat("Huh, you made a common mistake. Read the task precisely. You shall assign to z the first 100 square numbers, not only all square numbers that are less or equal to 100")
+  cat("Huh, you made a common mistake. Read the task precisely.
+  You shall assign to z the first 100 square numbers,
+  not only all square numbers that are less or equal to 100")
 } else if (true(length(z)!=100)) {
   cat("Your variable z must have 100 elements, but in your solution z has", length(z),"elements.")  
 } else {
-  cat("There is a simple one-line formula to compute the first 100 square numbers. Just combine what you have learned in exercise 2 f) and in exercise 3 b).
+  cat("There is a simple one-line formula to compute the first 100 square numbers.
+  Just combine what you have learned in exercise 2 f) and in exercise 3 b).
 ")
 }
 #>
 z
 ```
 
-The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known. Also the student's current code that chunk has been run in a parent environment. 
+The code in the hint block will be evaluated in an environment in which the student's code has been evaluated and in which all variables defined in earlier solved chunks are known.
 
 The function `true` is a robust version of `isTRUE` that never throws an error, but simply returns `FALSE` if the expression cannot be evaluated. This is useful, because 
-whether `z` exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. A normal call to `isTRUE` would throw an error if `z` does not exist.
+whether `z` exists in the hint environment depends on whether the student has defined it in her solution for the chunk or not. A normal call to `isTRUE` would throw an error if `z` does not exist.
 
 Note that you and your students need at least version 2019.07.22 (yes my version numbers are just dates) of RTutor for those adaptive hints to work.
 
-Side remark: The new RTutor version also has improved behavior of the automatic tests. Working through the logs I found some systematic cases were RTutor failed to accept a seemingly correct solution without helpful message to the students why.
+Side remark: The new RTutor version also has improved behavior of the automatic tests. Working through the logs I found some systematic cases were RTutor rejected seemingly correct solutions without helpful failure message to the students. I strongly recommend to update to this new version!
