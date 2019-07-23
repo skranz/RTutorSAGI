@@ -4,27 +4,22 @@
 example.moodle = function() {
   base.dir = "D:/libraries/RTutor/ps2019"
   setwd(base.dir)
-  sub.li = load.moodle.subs(warn=FALSE)
+  unpack.moodle.sub.zips(zip.dir = "moodle_zip", sub.dir="sub")
+  sub.li = load.subs(sub.dir = "sub", stud.name.fun=moodle.stud.name.fun)
   grade.subs(sub.li=sub.li)
 }
 
-load.moodle.subs = function(base.dir=getwd(), prefix="",postfix=".zip", grade.dir = paste0(base.dir,"/grades"), zip.dir = paste0(base.dir,"/bigzip"), sub.dir=file.path(base.dir,"sub"), force.unpack=FALSE,...) {
-  restore.point("grade.moodle.subs")
-  setwd(base.dir)
-  if (!dir.exists(sub.dir) | force.unpack) {
-    res = unpack.moodle.sub.zips(base.dir, prefix = prefix, postfix=postfix, zip.dir = zip.dir, sub.dir=sub.dir)
-  } else {
-    cat("\nSkip unpacking of Moodle ZIP files since sub directory already exists and force.unpack==FALSE.\n")
-  }
-  sub.li = load.subs(sub.dir = sub.dir, stud.name.fun=moodle.stud.name.fun,...)
-  sub.li
+#' Load submission files that follow
+#' Moodle's naming convention
+load.moodle.subs = function(base.dir=getwd(),sub.dir=file.path(base.dir,"sub"),stud.name.fun=moodle.stud.name.fun,...) {
+  load.subs(sub.dir = sub.dir, stud.name.fun=stud.name.fun,...)
 }
 
 
 
 #' Takes assignment ZIPs with all students' solutions
 #' and unpacks them into separate folders for each assignment
-unpack.moodle.sub.zips = function(base.dir, prefix="", postfix=".zip", zip.dir = file.path(base.dir,"bigzip"), sub.dir = file.path(base.dir,"sub")) {
+unpack.moodle.sub.zips = function(base.dir, zip.dir = file.path(base.dir,"moodle_zip"), sub.dir = file.path(base.dir,"sub"),  prefix="", postfix=".zip") {
   restore.point("unpack.moodle.sub.zips")
 
   # Extract big ZIP files

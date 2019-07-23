@@ -1,8 +1,12 @@
-make.solve.stories = function(sub.li, stories.dir = "solve_stories") {
+#' Creates for each problem set and each chunk
+#' an R file that protocols the solution attempts by students.
+#'
+#' See README.md for details
+write.chunk.logs = function(sub.li, logs.dir = "chunk_logs", rps.dir="org_ps") {
   base.dir = "D:/libraries/RTutor/ps2019"
   setwd(base.dir)
   sub.li = load.moodle.subs(warn=FALSE)
-  res = analyse.subs(sub.li,no.summary=TRUE)
+  res = analyse.subs(sub.li,no.summary=TRUE,rps.dir = rps.dir)
   err.df = res$err.df
   hint.df = res$hint.df
   log.df = bind_rows(err.df, hint.df)
@@ -17,19 +21,19 @@ make.solve.stories = function(sub.li, stories.dir = "solve_stories") {
   ps.name = ps.names[1]
   chunk = 1
   for (ps.name in ps.names) {
-    dir = file.path(stories.dir,ps.name)
+    dir = file.path(logs.dir,ps.name)
     if (!dir.exists(dir))
       dir.create(dir, recursive=TRUE)
     df = log.df[log.df$ps.name == ps.name,]
     chunks = unique(df$chunk)
     for (chunk in chunks) {
-      make.chunk.solve.story(log.df, ps.name, chunk, dir=dir)
+      make.chunk.log(log.df, ps.name, chunk, dir=dir)
     }
   }
-
+  invisible(res$sum.df)
 }
 
-make.chunk.solve.story = function(log.df, ps.name, chunk, dir=NULL, verbose=TRUE) {
+write.chunk.log = function(log.df, ps.name, chunk, dir=NULL, verbose=TRUE) {
   restore.point("make.chunk.solve.story")
   rows = log.df$ps.name == ps.name & log.df$chunk == chunk
   df = log.df[rows,]

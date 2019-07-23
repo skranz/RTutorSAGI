@@ -2,14 +2,18 @@
 
 grade.log = as.environment(list(current=NULL, all=NULL, file="grade_log.txt"))
 
-examples.grade.sol = function() {
-  base.dir = "D:/lehre/empIOUlm/rtutor/ps2019"
+examples.grade.sub = function() {
+  base.dir = "D:/libraries/RTutor/ps2019"
   setwd(base.dir)
-  grade.sol()
+  sub.li = load.subs(sub.dir = "sub", stud.name.fun=moodle.stud.name.fun)
+  grade.subs(sub.li=sub.li, grade.dir="grades")
 }
 
-
-grade.subs = function(sub.li, base.dir=getwd(), grade.dir = paste0(base.dir,"/grades")) {
+#' Combine for each student the points from all problem sets and create
+#' csv files with the total points.
+#'
+#' See README.md for usage
+grade.subs = function(sub.li, grade.dir = paste0(base.dir,"/grades"), base.dir=getwd()) {
   restore.point("grade.subs")
   setwd(base.dir)
 

@@ -1,5 +1,7 @@
 
-# Load all submissions in a directory
+#' Load all submissions from a directory
+#'
+#' See README.md for usage
 load.subs = function(base.dir=NULL, files=NULL, stud.name.fun=NULL, sub.dir = file.path(base.dir, "sub"), warn=TRUE) {
   restore.point("load.subs")
 
@@ -13,12 +15,12 @@ load.subs = function(base.dir=NULL, files=NULL, stud.name.fun=NULL, sub.dir = fi
       write.grade.log(str,console = if (warn) "warning" else "cat")
     }
   }
-  sub.li = lapply(files, load.sub.with.stud.name, stud.name.fun=stud.name.fun)
+  sub.li = lapply(files, load.sub, stud.name.fun=stud.name.fun)
   sub.li
 }
 
 
-load.sub.with.stud.name = function(file, stud.name.fun=NULL) {
+load.sub = function(file, stud.name.fun=NULL) {
   restore.point("load.sub.with.stud.name")
 
   load(file)
