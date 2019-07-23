@@ -146,6 +146,7 @@ sum.df = res$sum.df
 ```
 and then look at `sum.df`.
 
+### Example: Improving with an adaptive hint
 
 For an example, of how the logs can help improving a problem set, consider the following following task from Excercise 3 e) of my Intro to R problem set.
 
@@ -229,6 +230,60 @@ whether `z` exists in the hint environment depends on whether the student has de
 
 Note that you and your students need at least version 2019.07.22 (yes my version numbers are just dates) of RTutor for those adaptive hints to work.
 
+### Another Example: Adding conditional hint to automatic hint.
+
+Let us look at another example. Here is a task from another problem set:
+
+> Using the command `cbind`, generate the matrix X of explanatory variable whose first column consists of 1 and the second column consists of p.
+
+Here is an excerpt from the chunk log:
+```
+# NEW USER **********************************
+
+
+cbind(1,p)
+
+# *** 29 secs later... 
+
+x <- cbind(1,p)
+
+# *** 13 secs later... 
+
+x = cbind(1,p)
+
+# *** 98 secs later...  asked for hint.
+# NEW USER **********************************
+
+# *** 5.983333 mins later... 
+
+x= cbind(1,p)
+
+# NEW USER **********************************
+
+
+x=cbind(rep(1,T),p)
+
+
+# ***  22 secs later... 
+
+x=cbind(rep(1,T),p)
+
+
+# *** 103 secs later...  asked for hint.
+```
+
+In the original problem set only the automatic hint was shown. I wanted to keep it, since it provided valuable information for different mistakes. But it did not help users that mixed up `X` and `x`. Here is the modified chunk in the solution file:
+
+```r
+X = cbind(1,p)
+#< add_to_hint
+if (exists("x") & !exists("X")) {
+  cat("It looks like you assigned the value to 'x' (lowercase), but you shall assign the value to 'X' (uppercase).")
+}
+#>
+```
+Using an `#<add_to_hint` blocks means that the automatic hint will still be always shown. The message from the adaptive custom hint will be added below.
+
 ## Note: Improvements of automatic tests with RTutor version 2019.07.22
 
 Working through the logs I found some systematic cases were RTutor rejected seemingly correct solutions without helpful failure message to the students. If you analyse a log were students still had older version, a lot of problems may go away once everybody updates to the new RTutor version.
@@ -238,7 +293,7 @@ For example, I had the following task:
 > Show the column names of `dat`.
 
 ```
-```{r "1__c"}
+    ```{r "1__c"}
     colnames(dat)
     #< hint
     display('Google for something like "R show column names of data frame" to find the function to show column names.')
@@ -282,7 +337,7 @@ ls(dat)
 # ...
 ```
 
-If a variable is assigned, it does not matter by default which function the user uses. However, if just a call like `colnames("dat")` is stated, RTutor requires the user to use exactly that function `colnames`. Unfortunately, there were no informative automatic messages that made the student aware of this issue. In the new RTutor version, the user gets a better message if she got an equivalent solution with a different call. E.g. if she typed
+If in a task a variable shall be assigned then by default every solution where that variable has the right values is accepted. In contrast if just a call like `colnames("dat")` is given in the sample solution then RTutor requires the user to use exactly that function `colnames`. Unfortunately, there were no informative automatic messages that made the student aware of this issue. In the new RTutor version, the user gets a better message if she got an equivalent solution with a different call. E.g. if she typed
 
 ```r
 names(dat)
@@ -294,7 +349,8 @@ Ok, in chunk 1__c your command
 
     names(dat)
 
-indeed yields the correct result. But in this task you shall learn how to directly call the function 'colnames', like 
+indeed yields the correct result. But in this task you shall learn
+how to directly call the function 'colnames', like 
 
     colnames(dat)
 
@@ -304,7 +360,7 @@ For a hint, type hint() in the console and press Enter.
 
 I guess this change should avoid a lot of warranted frustration. (Even though it would not help if the user typed `ls(dat)`, as one user did, since this changes the ordering of columns.)
 
-Another issue is that RTutor cannot really well test chunks in which the same variable is assigned twice. For example, recall the task already discussed above:
+Another issue is that RTutor cannot handle well chunks in which the same variable is assigned twice. For example, recall the task already discussed above:
 
 > e) Let z be a variable that shows the first 100 square numbers, i.e. 1,4,9,... Then show z.
 
@@ -314,7 +370,7 @@ z=(1:100)
 z=z*z
 z
 ```
-Unfortunately, RTutor does not consider the solution correct because it gets confused since `z` is assigned twice in the chunk. Even worse the old version of RTutor it did not provide a helpful error message.
+Unfortunately, RTutor does not consider the solution correct, It gets confused since `z` is assigned twice in the chunk. Even worse the old version of RTutor it did not provide a helpful error message.
 
 (The reasons that RTutor cannot handle such code correctly are complicated. It has to due with the fact that RTutor tests by default separately each command in a given chunk of the sample solution. This means it has to match the commands from the student's code to the corresponding command in the sample solution. If `z` was assigned twice, old RTutor assumed that one of the two lines must be completely correct in itself instead of being correct only when run together.)
 
