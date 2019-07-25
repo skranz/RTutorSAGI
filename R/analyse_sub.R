@@ -25,7 +25,7 @@ analyse.subs = function(sub.li, base.dir=getwd(), rps.dir=file.path(base.dir,"ps
 
   ps.names = unique(log.df$ps.name)
   cdt = bind_rows(lapply(ps.names,function(ps.name){
-    rps = load.rps(ps.name)
+    rps = load.rps(file.path(rps.dir,ps.name))
     cdt = rps$cdt
     cdt$ps.name = ps.name
     cdt
