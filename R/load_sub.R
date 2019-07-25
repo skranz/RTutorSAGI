@@ -31,7 +31,7 @@ load.sub = function(file, stud.name.fun=NULL) {
     stud.name = stud.name.fun(file, sub)
     sub$stud.name = stud.name
   } else {
-    sub$stud.name = stud$user.name
+    sub$stud.name = sub$user.name
   }
   sub$log.df$stud.name = sub$stud.name
   sub$log.df$ps.name = sub$ps.name
