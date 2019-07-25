@@ -46,7 +46,7 @@ psImproveApp = function(sum.df, err.df=NULL, hint.df=NULL, log.df = rbind(err.df
     cd = sum.df[row,]
 
 
-    txt = make.chunk.log.txt(log.df, cd$ps.name, cd$chunk)
+    txt = write.chunk.log.txt(log.df, cd$ps.name, cd$chunk)
 
     txt = paste0(cd$ps.name, " ", cd$chunk.name, "\n\n",txt)
 

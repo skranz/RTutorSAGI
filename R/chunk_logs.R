@@ -25,7 +25,7 @@ write.chunk.logs = function(sub.li, logs.dir = "chunk_logs", rps.dir="org_ps") {
     df = log.df[log.df$ps.name == ps.name,]
     chunks = unique(df$chunk)
     for (chunk in chunks) {
-      make.chunk.log(log.df, ps.name, chunk, dir=dir)
+      write.chunk.log(log.df, ps.name, chunk, dir=dir)
     }
   }
   invisible(res$sum.df)
