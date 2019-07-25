@@ -129,8 +129,8 @@ The natural approach seems to have an iterative process, where one improves a pr
 Information about solution attempts is stored in the logs that are by default part of students' submission files. To convert the information into a more convenient format call:
 
 ```r
-sub.li = load.subs(sub.dir="sub", rps.dir="org_ps")
-write.chunk.logs(sub.li, logs.dir = "chunk_logs")
+sub.li = load.subs(sub.dir="sub")
+write.chunk.logs(sub.li, logs.dir = "chunk_logs",  rps.dir="org_ps")
 ```
 
 Make sure that you store in the directory specified by `rps.dir` all rps files of the original (unimproved) versions of your problem sets. The call  to `write.chunk.logs` creates and fills the directory specified in `logs.dir` with subdirectories for each problem set. Each subdirectory contains an .R file for each chunk of the problem set that requires the user to enter code. An example file name is
@@ -272,7 +272,7 @@ x=cbind(rep(1,T),p)
 # *** 103 secs later...  asked for hint.
 ```
 
-In the original problem set only the automatic hint was shown. I wanted to keep it, since it provided valuable information for different mistakes. But it did not help users that mixed up `X` and `x`. Here is the modified chunk in the solution file:
+In the original problem set, only the automatic hint was shown. I wanted to keep it, since it provides valuable information for different mistakes. But it did not help users that mixed up `X` and `x`. Here is the modified chunk in the solution file:
 
 ```r
 X = cbind(1,p)
@@ -370,7 +370,7 @@ z=(1:100)
 z=z*z
 z
 ```
-Unfortunately, RTutor does not consider the solution correct, It gets confused since `z` is assigned twice in the chunk. Even worse the old version of RTutor it did not provide a helpful error message.
+Unfortunately, RTutor does not consider the solution correct. It gets confused since `z` is assigned twice in the chunk. Even worse the old version of RTutor it did not provide a helpful error message.
 
 (The reasons that RTutor cannot handle such code correctly are complicated. It has to due with the fact that RTutor tests by default separately each command in a given chunk of the sample solution. This means it has to match the commands from the student's code to the corresponding command in the sample solution. If `z` was assigned twice, old RTutor assumed that one of the two lines must be completely correct in itself instead of being correct only when run together.)
 

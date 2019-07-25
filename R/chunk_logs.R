@@ -3,8 +3,6 @@
 #'
 #' See README.md for details
 write.chunk.logs = function(sub.li, logs.dir = "chunk_logs", rps.dir="org_ps") {
-  base.dir = "D:/libraries/RTutor/ps2019"
-  setwd(base.dir)
   sub.li = load.moodle.subs(warn=FALSE)
   res = analyse.subs(sub.li,no.summary=TRUE,rps.dir = rps.dir)
   err.df = res$err.df
