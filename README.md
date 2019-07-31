@@ -155,12 +155,11 @@ For an example, of how the logs can help improving a problem set, consider the f
 Here is the log of one user from `3_e (e 88 u 13 h 11).R`:
 
 ```r
-# NEW USER **********************************
 
+# NEW USER solved after 5 failures **********************************
 
 z=(seq(1:10))^2
 z
-
 
 # *** 26 secs later...  asked for hint.
 
@@ -169,12 +168,10 @@ z
 z=1:10*1:10
 z
 
-
 # *** 65 secs later... 
 
 z=(1:10)*(1:10)
 z
-
 
 # *** 23 secs later...  asked for hint.
 
@@ -183,8 +180,9 @@ z
 z=(1:10)^2
 z
 
+# *** 22 secs later... 
 
-# *** 22 secs later... solved succesfully!
+# *** 92 secs later...  solved succesfully!
 ```
 
 Looking at the whole log file, I found that several students assigned `z=(1:10)^2` instead of `z=(1:100)^2`.
@@ -203,7 +201,6 @@ When designing the problem set, I thought the that the automatic hint gave away 
 There is a simple one-line formula to compute the 100 first square numbers.
 Just combine what you have learned in exercise 2 f) and in exercise 3 b).")
 ```
-
 Based on the log files, I have now updated to an adaptive hint that provides more detailed information for this common mistake. In the solution file the chunk now has the following code:
 ```r
 z = 1:100 * 1:100
@@ -222,7 +219,6 @@ if (true(identical(z,1:10*1:10))) {
 #>
 z
 ```
-
 The code in the hint block will be evaluated in an environment in which the student's code has been evaluated and in which all variables defined in earlier solved chunks are known.
 
 The function `true` is a robust version of `isTRUE` that never throws an error, but simply returns `FALSE` if the expression cannot be evaluated. This is useful, because 
@@ -238,7 +234,8 @@ Let us look at another example. Here is a task from another problem set:
 
 Here is an excerpt from the chunk log:
 ```
-# NEW USER **********************************
+
+# NEW USER solved after 3 failures **********************************
 
 
 cbind(1,p)
@@ -252,13 +249,20 @@ x <- cbind(1,p)
 x = cbind(1,p)
 
 # *** 98 secs later...  asked for hint.
-# NEW USER **********************************
 
-# *** 5.983333 mins later... 
+# *** 49 secs later...  solved succesfully!
+
+# NEW USER solved after 1 failures **********************************
+ asked for hint.
+
+# *** 359 secs later... 
 
 x= cbind(1,p)
 
-# NEW USER **********************************
+
+# ***  41 secs later...  solved succesfully!
+
+# NEW USER solved after 2 failures **********************************
 
 
 x=cbind(rep(1,T),p)
@@ -270,6 +274,8 @@ x=cbind(rep(1,T),p)
 
 
 # *** 103 secs later...  asked for hint.
+
+# ***  38 secs later...  solved succesfully!
 ```
 
 In the original problem set, only the automatic hint was shown. I wanted to keep it, since it provides valuable information for different mistakes. But it did not help users that mixed up `X` and `x`. Here is the modified chunk in the solution file:
@@ -283,6 +289,7 @@ if (exists("x") & !exists("X")) {
 #>
 ```
 Using an `#<add_to_hint` blocks means that the automatic hint will still be always shown. The message from the adaptive custom hint will be added below.
+
 
 ## Note: Improvements of automatic tests with RTutor version 2019.07.22
 
@@ -302,7 +309,8 @@ For example, I had the following task:
 ```
 There are surprisingly many ways to get the column names. Here is an excerpt from the chunk log:
 ```r
-# NEW USER **********************************
+
+# NEW USER solved after 3 failures **********************************
 
 
 names(dat)
@@ -316,11 +324,10 @@ names(dat)
 # *** 109 secs later... 
 
 names(dat)
-# NEW USER **********************************
 
+# NEW USER solved after 3 failures **********************************
 
 dat[]
-
 
 # *** 2645 secs later... 
 
@@ -331,10 +338,26 @@ variable.names(dat)
 variable.names(dat)
 
 # ***   39 secs later...  solved succesfully!
-# NEW USER **********************************
+
+# NEW USER solved after 4 failures **********************************
 
 ls(dat)
-# ...
+
+
+# *** 35 secs later... 
+show(dat)
+
+
+# *** 15 secs later... 
+hint()
+
+
+# *** 18 secs later...  asked for hint.
+
+# *** 59 secs later... 
+print(dat)
+
+# *** 58 secs later...  solved succesfully!
 ```
 
 If in a task a variable shall be assigned then by default every solution where that variable has the right values is accepted. In contrast if just a call like `colnames("dat")` is given in the sample solution then RTutor requires the user to use exactly that function `colnames`. Unfortunately, there were no informative automatic messages that made the student aware of this issue. In the new RTutor version, the user gets a better message if she got an equivalent solution with a different call. E.g. if she typed

@@ -3,7 +3,7 @@ examples.analyse.sub = function() {
   base.dir = "D:/lehre/empIOUlm/rtutor/ps2019"
   setwd(base.dir)
   sub.li = load.moodle.subs(warn=FALSE)
-  res = analyse.subs(sub.li)
+  res = analyse.subs(sub.li, rps.dir = "org_ps")
   saveRDS(res, "analysis.Rds")
 
   res = readRDS("analysis.Rds")
@@ -51,10 +51,31 @@ analyse.subs = function(sub.li, base.dir=getwd(), rps.dir=file.path(base.dir,"ps
     group_by(ps.name, stud.name, chunk) %>%
     top_n(-1,time) %>%
     slice(1) %>%
-    ungroup()
+    ungroup() %>%
+    unique()
+
+  solve.df = bind_rows(lapply(sub.li, function(sub) {
+    sub$by.chunk %>%
+      select( ps.name=ps.name,chunk = chunk.ps.ind,share.solved = share.solved,  ups.hints = num.hints) %>%
+      mutate(stud.name = sub$stud.name,solved = share.solved == 100)
+  }))
+  solve.df = solve.df %>% left_join(
+      select(first.solve.df,ps.name, stud.name, chunk, time.solved=time),
+      by = c("ps.name","stud.name","chunk")
+    ) %>%
+    mutate(solved.in.log = !is.na(time.solved))
+
+  # Note: first.solve.df has more rows than solve.df because it also
+  # contains information about full task chunks that don't give any points
+
+  #df = anti_join(first.solve.df, solve.df,  by = c("ps.name","stud.name","chunk"))
+
+  #df = filter(solve.df, solved != solved.in.log)
+
+  sub = sub.li[[1]]
 
   if (no.summary) {
-    return(list(err.df=err.df, hint.df=hint.df, first.solve.df=first.solve.df))
+    return(list(err.df=err.df, hint.df=hint.df, first.solve.df=first.solve.df, solve.df = solve.df))
   }
 
   #  group_by()
@@ -95,7 +116,7 @@ analyse.subs = function(sub.li, base.dir=getwd(), rps.dir=file.path(base.dir,"ps
     dplyr::mutate_if(is.numeric,na.to.zero) %>%
     arrange(-num_hint, -num_err)
 
-  list(sum.df = chunk.sum, err.df=err.df, hint.df = hint.df)
+  list(sum.df = chunk.sum, err.df=err.df, hint.df = hint.df, solve.df = solve.df)
 }
 
 
