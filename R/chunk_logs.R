@@ -3,13 +3,16 @@ example.write.chunk.logs = function() {
   setwd(base.dir)
   sub.li = load.moodle.subs(warn=FALSE)
   write.chunk.logs(sub.li, rps.dir = "org_ps")
-
 }
 
 #' Creates for each problem set and each chunk
 #' an R file that protocols the solution attempts by students.
 #'
 #' See README.md for details
+#'
+#' @param sub.li A list of loaded submission files. See \code{\link{load.subs}}
+#' @param logs.dir Directory into which log files shall be written
+#' @param rps.dir The directory in which you have all rps files of the problem sets (original versions)
 write.chunk.logs = function(sub.li, logs.dir = "chunk_logs", rps.dir="org_ps") {
   restore.point("write.chunk.logs")
 
@@ -47,7 +50,7 @@ write.chunk.logs = function(sub.li, logs.dir = "chunk_logs", rps.dir="org_ps") {
 }
 
 write.chunk.log = function(log.df, ps.name, chunk, solve.df, dir=NULL, verbose=TRUE) {
-  #restore.point("write.chunk.log")
+  restore.point("write.chunk.log")
   rows = log.df$ps.name == ps.name & log.df$chunk == chunk
   df = log.df[rows,]
   df$time = as.POSIXct(df$time)
@@ -78,8 +81,10 @@ write.chunk.log = function(log.df, ps.name, chunk, solve.df, dir=NULL, verbose=T
     time.diff = c("",paste0("\n# *** ",format(difftime(udf$time[-1],udf$time[-n])), " later... "))
     txt = paste0(time.diff,txt)
 
+    #restore.point("dhfkhduizfiu")
     us = solve.df[solve.df$stud.name == stud.name,]
-    paste0("\n\n# NEW USER ",ifelse(true(us$solved[1]),"solved"," unsolved"), " after ",num.fails, " failures **********************************\n",merge.lines(txt))
+    duration = format(round(max(udf$time)-min(udf$time),1))
+    paste0("\n\n# NEW USER ",ifelse(true(us$solved[1]),"solved"," unsolved"), " after ",num.fails, " failures (", duration,") *********************\n",merge.lines(txt))
   })
 
   res = paste0(all.txt, collapse="")
@@ -91,8 +96,9 @@ write.chunk.log = function(log.df, ps.name, chunk, solve.df, dir=NULL, verbose=T
   num.hint = sum(df$type == "hint")
   num.solved = sum(solve.df$solved)
   num.failed = sum(!solve.df$solved)
+  num.protracted = sum(solve.df$protracted)
 
-  res = paste0("# ",ps.name, " ", chunk.name, "\n# ",num.solved, " users solved and ", num.failed, " not.\n# Failed checks: ",num.err, " Hints: ",num.hint, res)
+  res = paste0("# ",ps.name, " ", chunk.name, "\n# ",num.solved, " users solved (",num.protracted, " took long time) and ", num.failed, " failed.\n# Failed checks: ",num.err, " Hints: ",num.hint, res)
 
   if (!is.null(dir)) {
 

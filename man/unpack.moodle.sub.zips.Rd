@@ -5,8 +5,13 @@
 \title{Takes assignment ZIPs with all students' solutions
 and unpacks them into separate folders for each assignment}
 \usage{
-unpack.moodle.sub.zips(base.dir, zip.dir = file.path(base.dir, "moodle_zip"),
-  sub.dir = file.path(base.dir, "sub"), prefix = "", postfix = ".zip")
+unpack.moodle.sub.zips(zip.dir = "moodle_zip", sub.dir = "sub",
+  prefix = "", postfix = ".zip")
+}
+\arguments{
+\item{zip.dir}{directory with big ZIP files from Moodle. Each ZIP file contains all submissions of one problem set}
+
+\item{sub.dir}{directory into which sub files shall be extracted}
 }
 \description{
 Takes assignment ZIPs with all students' solutions

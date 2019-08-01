@@ -5,10 +5,20 @@
 \title{Summarize number of errors and hints by
 looking at the submission logs}
 \usage{
-analyse.subs(sub.li, base.dir = getwd(), rps.dir = file.path(base.dir,
-  "ps"), no.summary = FALSE)
+analyse.subs(sub.li, rps.dir = "org_ps", just.summary = FALSE,
+  no.summary = FALSE, protracted.minutes = 30)
+}
+\arguments{
+\item{sub.li}{A list of loaded submission files. See \code{\link{load.subs}}}
+
+\item{rps.dir}{The directory in which you have all rps files of the problem sets (original versions)}
+
+\item{just.summary}{if TRUE just return the chunk summary data frame. If FALSE (default) return a list that also contains several intermediate data frames.}
+
+\item{no.summary}{if TRUE just return list without summary data frame (used by write.chunk.logs)}
+
+\item{protracted.minutes}{Used to classify whether it took a long time, possible due to a break when gotten stuck for a student to solve the chunk. We measure the duration between the first failed attempt and the time the chunk is first solved. If this is longer (in minutes) than \code{protracted.minutes} (default = 30), we classify that it was protracted for the student to solve the chunk. The summary in sum.df counts for how many students it was protracted to solve the chunk.}
 }
 \description{
-Summarize number of errors and hints by
-looking at the submission logs
+See README.md for usage
 }

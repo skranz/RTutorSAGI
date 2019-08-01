@@ -13,9 +13,8 @@ examples.grade.sub = function() {
 #' csv files with the total points.
 #'
 #' See README.md for usage
-grade.subs = function(sub.li, grade.dir = paste0(base.dir,"/grades"), base.dir=getwd()) {
+grade.subs = function(sub.li, grade.dir = "grades") {
   restore.point("grade.subs")
-  setwd(base.dir)
 
   grade.total.points(sub.li)
   log.df = import.logs(sub.li)

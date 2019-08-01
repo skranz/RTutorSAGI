@@ -2,7 +2,9 @@
 #' Load all submissions from a directory
 #'
 #' See README.md for usage
-load.subs = function(base.dir=NULL, files=NULL, stud.name.fun=NULL, sub.dir = file.path(base.dir, "sub"), warn=TRUE) {
+#'
+#' @param sub.dir The directory in which all submission files can be found.
+load.subs = function(sub.dir = "sub", files=NULL, stud.name.fun=NULL, warn=TRUE) {
   restore.point("load.subs")
 
   if (is.null(files)) {

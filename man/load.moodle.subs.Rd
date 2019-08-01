@@ -5,8 +5,7 @@
 \title{Load submission files that follow
 Moodle's naming convention}
 \usage{
-load.moodle.subs(base.dir = getwd(), sub.dir = file.path(base.dir, "sub"),
-  stud.name.fun = moodle.stud.name.fun, ...)
+load.moodle.subs(sub.dir = "sub", stud.name.fun = moodle.stud.name.fun, ...)
 }
 \description{
 Load submission files that follow

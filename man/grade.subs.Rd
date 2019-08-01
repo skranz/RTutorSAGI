@@ -5,8 +5,7 @@
 \title{Combine for each student the points from all problem sets and create
 csv files with the total points.}
 \usage{
-grade.subs(sub.li, grade.dir = paste0(base.dir, "/grades"),
-  base.dir = getwd())
+grade.subs(sub.li, grade.dir = "grades")
 }
 \description{
 See README.md for usage

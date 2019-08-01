@@ -11,7 +11,7 @@ example.moodle = function() {
 
 #' Load submission files that follow
 #' Moodle's naming convention
-load.moodle.subs = function(base.dir=getwd(),sub.dir=file.path(base.dir,"sub"),stud.name.fun=moodle.stud.name.fun,...) {
+load.moodle.subs = function(sub.dir="sub",stud.name.fun=moodle.stud.name.fun,...) {
   load.subs(sub.dir = sub.dir, stud.name.fun=stud.name.fun,...)
 }
 
@@ -19,7 +19,10 @@ load.moodle.subs = function(base.dir=getwd(),sub.dir=file.path(base.dir,"sub"),s
 
 #' Takes assignment ZIPs with all students' solutions
 #' and unpacks them into separate folders for each assignment
-unpack.moodle.sub.zips = function(base.dir, zip.dir = file.path(base.dir,"moodle_zip"), sub.dir = file.path(base.dir,"sub"),  prefix="", postfix=".zip") {
+#'
+#' @param zip.dir directory with big ZIP files from Moodle. Each ZIP file contains all submissions of one problem set
+#' @param sub.dir directory into which sub files shall be extracted
+unpack.moodle.sub.zips = function(zip.dir = "moodle_zip", sub.dir = "sub",  prefix="", postfix=".zip") {
   restore.point("unpack.moodle.sub.zips")
 
   # Extract big ZIP files

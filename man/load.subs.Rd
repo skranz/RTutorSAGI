@@ -4,8 +4,11 @@
 \alias{load.subs}
 \title{Load all submissions from a directory}
 \usage{
-load.subs(base.dir = NULL, files = NULL, stud.name.fun = NULL,
-  sub.dir = file.path(base.dir, "sub"), warn = TRUE)
+load.subs(sub.dir = "sub", files = NULL, stud.name.fun = NULL,
+  warn = TRUE)
+}
+\arguments{
+\item{sub.dir}{The directory in which all submission files can be found.}
 }
 \description{
 See README.md for usage

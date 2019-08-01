@@ -7,6 +7,13 @@ an R file that protocols the solution attempts by students.}
 \usage{
 write.chunk.logs(sub.li, logs.dir = "chunk_logs", rps.dir = "org_ps")
 }
+\arguments{
+\item{sub.li}{A list of loaded submission files. See \code{\link{load.subs}}}
+
+\item{logs.dir}{Directory into which log files shall be written}
+
+\item{rps.dir}{The directory in which you have all rps files of the problem sets (original versions)}
+}
 \description{
 See README.md for details
 }
