@@ -98,7 +98,7 @@ write.chunk.log = function(log.df, ps.name, chunk, solve.df, dir=NULL, verbose=T
   num.failed = sum(!solve.df$solved)
   num.protracted = sum(solve.df$protracted)
 
-  res = paste0("# ",ps.name, " ", chunk.name, "\n# ",num.solved, " users solved (",num.protracted, " took long time) and ", num.failed, " failed.\n# Failed checks: ",num.err, " Hints: ",num.hint, res)
+  res = paste0("# ",ps.name, " ", chunk.name, "\n# ",num.solved, " users solved (",num.protracted, " took long time) and ", num.failed, " failed.\n# Failed checks: ",num.err, ", Hints: ",num.hint, res)
 
   if (!is.null(dir)) {
 
