@@ -10,10 +10,6 @@ examples.analyse.sub = function() {
   sum.df = res$sum.df
   hint.df = res$hint.df
   err.df = res$err.df
-
-  app = psImproveApp(sum.df, err.df, hint.df, sol.dir="new_rmd")
-
-  viewApp(app)
 }
 
 #' Summarize number of errors and hints by
