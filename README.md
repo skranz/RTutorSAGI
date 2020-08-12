@@ -299,7 +299,7 @@ library(RTutorSAGI)
 # 1. Analyse submissions as before
 rps.dir = "your_dir_with_rps_files"
 sub.dir = "your_sub_dir"
-sub.li = load.moodle.subs(sub.dir,warn=FALSE, max.files=10)
+sub.li = load.moodle.subs(sub.dir,warn=FALSE)
 res = analyse.subs(sub.li, rps.dir = rps.dir,no.summary = TRUE)
 
 # Extract err.df
