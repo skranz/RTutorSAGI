@@ -290,6 +290,36 @@ if (exists("x") & !exists("X")) {
 ```
 Using an `#<add_to_hint` blocks means that the automatic hint will still be always shown. The message from the adaptive custom hint will be added below.
 
+## Create automatic hint templates 
+
+A new feature (as of August 2020) simplifies to generate adaptive hints of common mistakes in R. Just adapt the directories in the following example code:
+
+```r
+library(RTutorSAGI)
+# 1. Analyse submissions as before
+rps.dir = "your_dir_with_rps_files"
+sub.dir = "your_sub_dir"
+sub.li = load.moodle.subs(sub.dir,warn=FALSE, max.files=10)
+res = analyse.subs(sub.li, rps.dir = rps.dir,no.summary = TRUE)
+
+# Extract err.df
+err.df = res$err.df
+
+# This computation takes some time
+es = err.sol.table(err.df, rps.dir=rps.dir)
+
+# You may want to save the results
+# saveRDS(es, "err_sol.Rds")
+# es = readRDS("err_sol.Rds")
+
+# Create hint.stud.table from es
+hs = hint.stud.table(es,min.users = 2)
+# Open hs in RStudio Explorer
+hs
+```
+The final data frame `hs` should be openend in the RStudio explorer. Each row corresponds to a wrong solution for some particular command that at least `min.users` students made in their submission. The columns `hint.stud`, `hint.stud.fun` and `hint.block` contain code templates for corresponding adaptive customized hints. You can copy paste them when you look at the data frame `hs` from the RStudio table viewer and possibly copy the code into your problem set solutions for more adaptive customized hints (see [here](https://skranz.github.io/RTutor/articles/03_HintsAndTests.html#adaptive-custom-hints-for-specific-user-calls) for documentation and examples).
+
+Since `hs` is a data frame you can easily arrange it or filter rows in any way you like.
 
 ## Note: Improvements of automatic tests with RTutor version 2019.07.22
 
@@ -409,7 +439,7 @@ For a hint, type hint() in the console and press Enter.
 
 ## Workflow for improving problem sets
 
-Here is a suggestion for a rough workflow to improve problem sets.
+Here is a suggestion for a rough workflow to improve problem sets. (It does not yet use the `hint.stud.table` functions, which may yield an alternative workflow.)
 
 + Wait after the solutions for all problem sets of your course have been submitted. Then create a new working directory (possible as an RStudio project) and copy all problem set `_sol.Rmd` files and `.rps` files into two the sub directories folders and `org_ps`, `new_ps`. Extract the solutions to a `sol` directory (see explanation further above).
 

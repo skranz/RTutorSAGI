@@ -5,7 +5,7 @@
 \title{Load all submissions from a directory}
 \usage{
 load.subs(sub.dir = "sub", files = NULL, stud.name.fun = NULL,
-  warn = TRUE)
+  warn = TRUE, max.files = NA)
 }
 \arguments{
 \item{sub.dir}{The directory in which all submission files can be found.}
