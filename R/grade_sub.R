@@ -16,7 +16,7 @@ examples.grade.sub = function() {
 grade.subs = function(sub.li, grade.dir = "grades") {
   restore.point("grade.subs")
 
-  grade.total.points(sub.li)
+  res = grade.total.points(sub.li)
   log.df = import.logs(sub.li)
 
   df = filter(log.df, stud.name == log.df$stud.name[1], ps.name ==log.df$ps.name[1], type != "check_chunk")
@@ -24,8 +24,23 @@ grade.subs = function(sub.li, grade.dir = "grades") {
     summarise(mins = estimate.working.time(times=time, break.min=20)) %>% ungroup()
 
   write.csv(wt.df, file = paste0(grade.dir,"/estimated work time.csv"), row.names = FALSE)
+  print(as.data.frame(make.ps.stats(res$sub.df)))
 
-  cat("Files have been written to ", grade.dir)
+  cat("\nFiles have been written to ", grade.dir)
+
+}
+
+make.ps.stats = function(sub.df) {
+  sub.df %>%
+    group_by(ps.name) %>%
+    summarize(
+      ps.name = first(ps.name),
+      students = n(),
+      max.points = paste0(sort(unique(max.points)), collapse=" or "),
+      all.correct = paste0(round((mean(points==max.points)*100),1),"%"),
+      mean.solved = paste0(round((mean(share.solved)),1),"%"),
+      min.solved = paste0(round((min(share.solved)),1),"%")
+    )
 }
 
 estimate.working.time = function(times=df$time, break.min = 10) {
@@ -79,7 +94,7 @@ grade.total.points = function(sub.li, grade.dir = paste0(getwd(),"/grades")) {
   sub.df = arrange(sub.df,user.name)
   write.csv(sub.df,paste0(grade.dir,"/ps_points.csv"),row.names = FALSE)
 
-  temp.df = sub.df %>% group_by(ps.name) %>% summarise(points = first(max.points))
+  temp.df = sub.df %>% group_by(ps.name) %>% summarise(points = median(max.points))
   total.points = sum(temp.df$points)
 
   tot.df = sub.df %>% group_by(user.name) %>% summarise(
