@@ -1,8 +1,8 @@
 Package: RTutorSAGI
 Type: Package
 Title: Submission Analysis for Grading and Improvement
-Version: 2019.07.18
-Date: 2019-07-18
+Version: 2020.11.27
+Date: 2022-11-27
 Author: Sebastian Kranz
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
 Description: Tools for analysising submissions of solved RTutor problem sets.
