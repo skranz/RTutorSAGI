@@ -28,6 +28,7 @@ grade.subs = function(sub.li, grade.dir = "grades") {
 
   cat("\nFiles have been written to ", grade.dir)
 
+  invisible(res$sub.df)
 }
 
 make.ps.stats = function(sub.df) {
