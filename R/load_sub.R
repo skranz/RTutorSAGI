@@ -21,6 +21,7 @@ load.subs = function(sub.dir = "sub", files=NULL, stud.name.fun=NULL, warn=TRUE,
     if (max.files<length(files)) files = files[1:max.files]
   }
   sub.li = lapply(files, load.sub, stud.name.fun=stud.name.fun)
+  sub.li = sub.li[!sapply(sub.li, is.null)]
   sub.li
 }
 
@@ -30,7 +31,11 @@ load.subs = function(sub.dir = "sub", files=NULL, stud.name.fun=NULL, warn=TRUE,
 load.sub = function(file, stud.name.fun=NULL) {
   restore.point("load.sub.with.stud.name")
 
-  load(file)
+  res = try(load(file),silent = TRUE)
+  if (is(res,"try-error")) {
+    cat("\nCould not load file\n",file,"\n", as.character(res))
+    return(NULL)
+  }
 
   if (!is.null(stud.name.fun)) {
     stud.name = stud.name.fun(file, sub)

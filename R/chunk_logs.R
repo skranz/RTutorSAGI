@@ -66,6 +66,8 @@ write.chunk.log = function(log.df, ps.name, chunk, solve.df, dir=NULL, verbose=T
 
   df$code = gsub("\n# enter your code here ...","",df$code,fixed=TRUE)
 
+  df$code = gsub(".PH_._","___", df$code,fixed = TRUE)
+
   li = split(df, df$stud.name)
   all.txt = lapply(li, function(udf) {
     stud.name = udf$stud.name[[1]]

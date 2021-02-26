@@ -13,10 +13,10 @@ examples.grade.sub = function() {
 #' csv files with the total points.
 #'
 #' See README.md for usage
-grade.subs = function(sub.li, grade.dir = "grades") {
+grade.subs = function(sub.li, grade.dir = "grades", rename.ps=NULL, delete.ps = NULL) {
   restore.point("grade.subs")
 
-  res = grade.total.points(sub.li)
+  res = grade.total.points(sub.li, rename.ps=rename.ps, delete.ps=delete.ps)
   log.df = import.logs(sub.li)
 
   df = filter(log.df, stud.name == log.df$stud.name[1], ps.name ==log.df$ps.name[1], type != "check_chunk")
@@ -68,12 +68,8 @@ write.grade.log = function(msg, console="cat") {
   writeLines(grade.log$all, grade.log$file)
 }
 
-grade.total.points = function(sub.li, grade.dir = paste0(getwd(),"/grades")) {
-  restore.point("grade.total.points")
-
-  if (!dir.exists(grade.dir))
-    dir.create(grade.dir)
-
+sub.li.to.checked.sub.df = function(sub.li=NULL, rename.ps = NULL, delete.ps=NULL) {
+  restore.point("sub.li.to.checked.sub.df")
   # Grade all rows of sub.df separately
   li = lapply(sub.li, function(sub) {
     res = sub$total
@@ -82,6 +78,51 @@ grade.total.points = function(sub.li, grade.dir = paste0(getwd(),"/grades")) {
   })
   sub.df = bind_rows(li)
   sub.df$user.name = correct.stud.names(sub.df$user.name)
+
+  for (i in seq_along(rename.ps)) {
+    rows = which(sub.df$ps.name == rename.ps[i])
+    if (length(rows)>0) {
+      new.name = names(rename.ps)[i]
+      cat(paste0("\nRename wrong problem set ", sub.df$ps.name[rows], " to ", new.name ," (from ", sub.df$user.name[rows],")"), collapse="")
+      sub.df$ps.name[rows] = new.name
+    }
+  }
+  for (i in seq_along(delete.ps)) {
+    rows = which(sub.df$ps.name == rename.ps[i])
+    if (length(rows)>0) {
+      cat(paste0("\nDelete wrong named problem set ", sub.df$ps.name[rows] ," from ", sub.df$user.name[rows]), collapse="")
+      sub.df = sub.df[-rows,]
+    }
+  }
+
+  # Check if some problem sets were submitted twice
+  sub.df = sub.df %>%
+    group_by(user.name, ps.name) %>%
+    arrange(desc(points)) %>%
+    mutate(
+      num.submit = n(),
+      duplicate = (1:n() != 1)
+    )
+
+  dupl.user = unique(sub.df$user.name[sub.df$duplicate])
+
+  for (user in dupl.user) {
+    rows = which(sub.df$user.name == user)
+    dupl.rows = which(sub.df$user.name == user & sub.df$duplicate)
+    cat(paste0("\n\n",user, " has submitted the problem set ", paste0(sub.df$ps.name[dupl.rows], collapse=", "), " twice. Duplicates with fewer points are deleted.In total she submitted the problem sets ", paste0(sub.df$ps.name[rows], collapse=", ")))
+  }
+  cat("\n")
+  sub.df = filter(sub.df, !duplicate)
+  sub.df
+}
+
+grade.total.points = function(sub.li, grade.dir = paste0(getwd(),"/grades"), rename.ps=NULL, delete.ps = NULL) {
+  restore.point("grade.total.points")
+
+  if (!dir.exists(grade.dir))
+    dir.create(grade.dir)
+
+  sub.df = sub.li.to.checked.sub.df(sub.li, rename.ps=rename.ps, delete.ps = delete.ps)
 
 
   sub.df = mutate(group_by(sub.df, ps.name),
