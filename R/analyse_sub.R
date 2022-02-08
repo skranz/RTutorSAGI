@@ -27,11 +27,12 @@ analyse.subs = function(sub.li, rps.dir="org_ps",just.summary=FALSE, no.summary 
   log.df = import.logs(sub.li)
 
   ps.names = unique(log.df$ps.name)
+  ps.name = ps.names[1]
   cdt = bind_rows(lapply(ps.names,function(ps.name){
     rps = load.rps(file.path(rps.dir,ps.name))
     cdt = rps$cdt
     cdt$ps.name = ps.name
-    cdt
+    as.data.frame(cdt)
   }))
 
   log.df = log.df %>%

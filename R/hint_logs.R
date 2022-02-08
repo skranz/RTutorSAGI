@@ -11,10 +11,22 @@ write.hint.log = function(df, out.file = "hints.Rmd") {
     chunk = chunk.inds[1]
     for (chunk in chunk.inds) {
       chunk.df = ps.df[ps.df$chunk == chunk,]
+      chunk.df = chunk.df %>%
+        group_by(user) %>%
+        mutate(user.hints = n(), new.user = (1:n() == 1)) %>%
+        mutate(user.label = ifelse(!new.user,"",
+          paste0("\n********************* User with ", user.hints, " hints ********\n")
+        )) %>%
+        ungroup() %>%
+        arrange(desc(user.hints))
+
+
+      txt = paste0(txt,"\n### ", chunk.df$chunk.name[1], " ",
+        chunk.df$total.hints[1], " hints, ", chunk.df$students.with.hint[1], " students")
       txt = paste0(txt,"\n**************************************\n```{r \"solution_", chunk.df$chunk.name[1], " (",chunk.df$total.hints[1]," total hints)\"}\n",
         chunk.df$sol.txt[1],"\n```\n**************************************")
 
-      txt = paste0(txt,"\n",paste0(collapse="\n",
+      txt = paste0(txt,"\n",paste0(collapse="\n", chunk.df$user.label,
         "\n```{r \"", chunk.df$chunk.name[1], "-", seq_len(NROW(chunk.df)), "\"}\n",
         chunk.df$code,"\n````\nHint:\n", chunk.df$hint.txt,"\n\n(",chunk.df$hints.later, " hints and ", chunk.df$checks.later, " checks afterward)")
       )
@@ -96,17 +108,27 @@ create.sub.li.hints.for.ps = function (sub.li, ps.name, rps.dir=getwd())
   hint.txt = rep("", n)
   cdt = ps$cdt
   ps$cdt$sol.txt
+
+  copy.into.env(dest = ps$ps.baseenv, source = list(
+    install.packages = function(...) {
+      stop("Please don't call the function install.packages in your RTutor problem set. To load an already installed package, use the function library. To install packages, use a separate R script in which you write and run the install.packages command.")
+    }
+  ))
+
+
   for (chunk.ind in 1:n) {
     rows = which(df$chunk == chunk.ind)
     for (row in rows) {
+      restore.point("kmklsdmlksmdlksmd")
       stud.code = df$code[row]
-      check.chunk(chunk.ind = chunk.ind, stud.code = stud.code)
+      res = try(check.chunk(chunk.ind = chunk.ind, stud.code = stud.code),silent = TRUE)
       #copy.into.env(ps$stud.env, .GlobalEnv)
-      df$hint.txt[row] = merge.lines(capture.output(hint()))
+      df$hint.txt[row] = merge.lines(capture.output(try(hint(),silent = TRUE)))
       df$sol.txt[row] = ps$cdt$sol.txt[[chunk.ind]]
       df$chunk.name[row] = ps$cdt$chunk.name[[chunk.ind]]
 
     }
+    restore.point("kmklsdmlksmdlksmd")
     stud.code = ps$cdt$sol.txt[[chunk.ind]]
     check.chunk(chunk.ind = chunk.ind, stud.code = stud.code)
   }
